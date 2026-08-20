@@ -8,10 +8,7 @@ import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifications
 import qs.modules.osd as Osd
 import qs.modules.session as Session
-import qs.modules.sidebar as Sidebar
-import qs.modules.utilities as Utilities
 import qs.modules.bar.popouts as BarPopouts
-import qs.modules.utilities.toasts as Toasts
 
 Item {
     id: root
@@ -30,9 +27,6 @@ Item {
     readonly property alias dashboard: dashboard
     readonly property alias popouts: popoutsWrapper.content
     readonly property alias popoutsWrapper: popoutsWrapper
-    readonly property alias utilities: utilities
-    readonly property alias toasts: toasts
-    readonly property alias sidebar: sidebar
 
     anchors.fill: parent
     anchors.margins: borderThickness
@@ -44,7 +38,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: sessionWrapper.anchors.rightMargin + session.width * (1 - session.offsetScale)
-        clip: sidebar.visible || session.visible
+        clip: session.visible
 
         implicitWidth: osd.implicitWidth * (1 - osd.offsetScale)
         implicitHeight: osd.implicitHeight
@@ -54,7 +48,7 @@ Item {
 
             screen: root.screen
             screenState: root.screenState
-            sidebarOrSessionVisible: sidebar.visible || session.visible
+            sidebarOrSessionVisible: session.visible
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -65,10 +59,8 @@ Item {
         id: notifications
 
         screenState: root.screenState
-        sidebarPanel: sidebar
         osdPanel: osdWrapper
         sessionPanel: sessionWrapper
-        utilitiesPanel: utilities
 
         anchors.top: parent.top
         anchors.right: parent.right
@@ -79,8 +71,7 @@ Item {
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: sidebar.width * (1 - sidebar.offsetScale)
-        clip: sidebar.visible
+        clip: false
 
         implicitWidth: session.implicitWidth * (1 - session.offsetScale)
         implicitHeight: session.implicitHeight
@@ -89,7 +80,7 @@ Item {
             id: session
 
             screenState: root.screenState
-            sidebarVisible: sidebar.visible
+            sidebarVisible: false
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -111,6 +102,7 @@ Item {
         id: dashboard
 
         screenState: root.screenState
+        popouts: popoutsWrapper.content
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
@@ -121,35 +113,5 @@ Item {
 
         screen: root.screen
         borderThickness: root.borderThickness
-    }
-
-    Utilities.Wrapper {
-        id: utilities
-
-        screenState: root.screenState
-        sidebar: sidebar
-        popouts: popoutsWrapper.content
-
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-    }
-
-    Toasts.Toasts {
-        id: toasts
-
-        anchors.bottom: sidebar.visible ? parent.bottom : utilities.top
-        anchors.right: sidebar.left
-        anchors.margins: Tokens.padding.medium
-    }
-
-    Sidebar.Wrapper {
-        id: sidebar
-
-        screenState: root.screenState
-
-        anchors.top: notifications.bottom
-        anchors.bottom: utilities.top
-        anchors.right: parent.right
-        anchors.topMargin: -notifications.anchors.topMargin
     }
 }

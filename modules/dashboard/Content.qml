@@ -8,12 +8,14 @@ import Caelestia
 import Caelestia.Config
 import qs.components
 import qs.components.filedialog
+import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
     required property ScreenState screenState
     required property FileDialog facePicker
+    required property BarPopouts.Wrapper popouts
 
     readonly property var dashboardTabs: {
         const allTabs = [
@@ -34,6 +36,18 @@ Item {
                 iconName: "speed",
                 text: qsTr("Performance"),
                 enabled: Config.dashboard.showPerformance
+            },
+            {
+                component: notificationsComponent,
+                iconName: "notifications",
+                text: qsTr("Notifications"),
+                enabled: Config.sidebar.enabled
+            },
+            {
+                component: utilitiesComponent,
+                iconName: "build",
+                text: qsTr("Utilities"),
+                enabled: Config.utilities.enabled
             },
             {
                 component: weatherComponent,
@@ -173,6 +187,23 @@ Item {
                 id: performanceComponent
 
                 Performance {}
+            }
+
+            Component {
+                id: notificationsComponent
+
+                NotificationsTab {
+                    screenState: root.screenState
+                }
+            }
+
+            Component {
+                id: utilitiesComponent
+
+                UtilitiesTab {
+                    screenState: root.screenState
+                    popouts: root.popouts
+                }
             }
 
             Component {

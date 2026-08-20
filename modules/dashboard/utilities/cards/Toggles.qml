@@ -117,7 +117,6 @@ StyledRect {
                         inactiveOnColour: Colours.palette.m3onSurfaceVariant
                         isToggle: false
                         onClicked: {
-                            root.screenState.utilities = false;
                             WindowFactory.create();
                         }
                     }

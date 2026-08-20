@@ -171,15 +171,6 @@ ColumnLayout {
                     }
                 }
             }
-            DelegateChoice {
-                roleValue: "power"
-                delegate: EntryWrapper {
-                    Power {
-                        objectName: "taskbarPowerButton"
-                        screenState: root.screenState
-                    }
-                }
-            }
         }
     }
 

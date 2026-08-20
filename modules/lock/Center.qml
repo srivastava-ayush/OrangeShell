@@ -18,25 +18,15 @@ ColumnLayout {
 
     spacing: Tokens.spacing.largeIncreased
 
-    Clock {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Tokens.padding.large
-        centerScale: root.centerScale
-    }
-
-    StyledText {
-        Layout.alignment: Qt.AlignHCenter
-
-        text: Time.format("dddd • d MMM").toUpperCase()
-        color: Colours.palette.m3onSurface
-        font: Tokens.font.title.builders.medium.weight(Font.DemiBold).build()
-    }
-
     ProfilePic {
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: Tokens.spacing.extraExtraLarge * root.centerScale
-        Layout.bottomMargin: Tokens.spacing.extraLarge * root.centerScale
         centerWidth: root.centerWidth
+    }
+
+    Clock {
+        Layout.alignment: Qt.AlignHCenter
+        centerScale: root.centerScale
     }
 
     PasswordInput {

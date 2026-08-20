@@ -15,7 +15,7 @@ Item {
     required property int centerWidth
     readonly property color bgColour: Colours.tPalette.m3surfaceContainerHighest
 
-    implicitWidth: Math.round(centerWidth * 0.7)
+    implicitWidth: Math.round(centerWidth * 1.2)
     implicitHeight: {
         shape.height; // Force update when shape height changes
         return shape.pathBounds().height;
@@ -46,7 +46,7 @@ Item {
         id: pfp
 
         anchors.fill: shape
-        path: `${Paths.home}/.face`
+        path: `/vol1/.face`
 
         layer.enabled: true
         layer.effect: Mask {

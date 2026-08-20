@@ -28,9 +28,9 @@ StyledClippingRect {
     property real blur: onSpecial ? 1 : 0
 
     implicitWidth: Tokens.sizes.bar.innerWidth
-    implicitHeight: layout.implicitHeight + Tokens.padding.small
+    implicitHeight: Tokens.padding.small + Config.bar.workspaces.shown * 14 + (Config.bar.workspaces.shown - 1) * 4 + Tokens.padding.small
 
-    color: Colours.tPalette.m3surfaceContainer
+    color: "transparent"
     radius: Tokens.rounding.full
 
     Item {
@@ -46,25 +46,12 @@ StyledClippingRect {
             blurMax: 32
         }
 
-        Loader {
-            asynchronous: true
-            active: Config.bar.workspaces.occupiedBg
-
-            anchors.fill: parent
-            anchors.margins: Tokens.padding.extraSmall
-
-            sourceComponent: OccupiedBg {
-                workspaces: workspaces
-                occupied: root.occupied
-                groupOffset: root.groupOffset
-            }
-        }
-
         ColumnLayout {
             id: layout
 
-            anchors.centerIn: parent
-            spacing: Math.floor(Tokens.spacing.extraSmall)
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            spacing: 4
 
             Repeater {
                 id: workspaces
@@ -76,19 +63,6 @@ StyledClippingRect {
                     occupied: root.occupied
                     groupOffset: root.groupOffset
                 }
-            }
-        }
-
-        Loader {
-            asynchronous: true
-            anchors.horizontalCenter: parent.horizontalCenter
-            active: Config.bar.workspaces.activeIndicator
-
-            sourceComponent: ActiveIndicator {
-                activeWsId: root.activeWsId
-                workspaces: workspaces
-                mask: layout
-                fullscreen: root.fullscreen
             }
         }
 

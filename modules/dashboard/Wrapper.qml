@@ -7,11 +7,13 @@ import Caelestia.Config
 import qs.components
 import qs.components.filedialog
 import qs.utils
+import qs.modules.bar.popouts as BarPopouts
 
 Item {
     id: root
 
     required property ScreenState screenState
+    required property BarPopouts.Wrapper popouts
     readonly property FileDialog facePicker: FileDialog {
         title: qsTr("Select a profile picture")
         filterLabel: qsTr("Image files")
@@ -49,6 +51,7 @@ Item {
         sourceComponent: Content {
             screenState: root.screenState
             facePicker: root.facePicker
+            popouts: root.popouts
         }
     }
 }

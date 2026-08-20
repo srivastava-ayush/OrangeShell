@@ -21,7 +21,6 @@ CustomMouseArea {
     property point dragStart
     property bool dashboardShortcutActive
     property bool osdShortcutActive
-    property bool utilitiesShortcutActive
 
     function withinPanelHeight(panel: Item, x: real, y: real): bool {
         const panelY = root.borderThickness + panel.y;
@@ -75,9 +74,6 @@ CustomMouseArea {
             if (!dashboardShortcutActive)
                 screenState.dashboard = false;
 
-            if (!utilitiesShortcutActive)
-                screenState.utilities = false;
-
             if (!popouts.currentName.startsWith("traymenu") || ((popouts.current as StackView)?.depth ?? 0) <= 1) {
                 popouts.hasCurrent = false;
                 bar.closeTray();
@@ -85,9 +81,6 @@ CustomMouseArea {
 
             if (Config.bar.showOnHover)
                 bar.isHovered = false;
-
-            if (Config.sidebar.showOnHover)
-                screenState.sidebar = false;
         }
     }
 
@@ -117,83 +110,25 @@ CustomMouseArea {
                 screenState.bar = false;
         }
 
-        if (panels.sidebar.offsetScale === 1) {
-            // Show osd on hover
-            const showOsd = inRightPanel(panels.osdWrapper, x, y);
+        // Show osd on hover
+        const showOsd = inRightPanel(panels.osdWrapper, x, y);
 
-            // Always update visibility based on hover if not in shortcut mode
-            if (!osdShortcutActive) {
-                screenState.osd = showOsd;
-                root.panels.osd.hovered = showOsd;
-            } else if (showOsd) {
-                // If hovering over OSD area while in shortcut mode, transition to hover control
-                osdShortcutActive = false;
-                root.panels.osd.hovered = true;
-            }
+        // Always update visibility based on hover if not in shortcut mode
+        if (!osdShortcutActive) {
+            screenState.osd = showOsd;
+            root.panels.osd.hovered = showOsd;
+        } else if (showOsd) {
+            // If hovering over OSD area while in shortcut mode, transition to hover control
+            osdShortcutActive = false;
+            root.panels.osd.hovered = true;
+        }
 
-            const showSidebar = pressed && dragStart.x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x);
-
-            // Show sidebar on hover (top-right corner, bounded by notification panel height)
-            if (Config.sidebar.showOnHover) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
-                if (showSidebarHover && !screenState.sidebar)
-                    screenState.sidebar = true;
-            }
-
-            // Show/hide session on drag
-            if (pressed && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
-                    screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
-                    screenState.session = false;
-
-                // Show sidebar on drag if in session area and session is nearly fully visible
-                if (showSidebar && panels.session.offsetScale <= 0 && dragX < -Config.sidebar.dragThreshold)
-                    screenState.sidebar = true;
-            } else if (showSidebar && dragX < -Config.sidebar.dragThreshold) {
-                // Show sidebar on drag if not in session area
-                screenState.sidebar = true;
-            }
-        } else {
-            const outOfSidebar = x < width - panels.sidebar.width * (1 - panels.sidebar.offsetScale);
-            // Show osd on hover
-            const showOsd = outOfSidebar && inRightPanel(panels.osdWrapper, x, y);
-
-            // Always update visibility based on hover if not in shortcut mode
-            if (!osdShortcutActive) {
-                screenState.osd = showOsd;
-                root.panels.osd.hovered = showOsd;
-            } else if (showOsd) {
-                // If hovering over OSD area while in shortcut mode, transition to hover control
-                osdShortcutActive = false;
-                root.panels.osd.hovered = true;
-            }
-
-            // Show/hide session on drag
-            if (pressed && outOfSidebar && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
-                if (dragX < -Config.session.dragThreshold)
-                    screenState.session = true;
-                else if (dragX > Config.session.dragThreshold)
-                    screenState.session = false;
-            }
-
-            // Show/hide sidebar on hover
-            if (Config.sidebar.showOnHover && !pressed) {
-                const sidebarTriggerY = Math.max(Config.sidebar.minHoverThreshold, panels.notifications.y + panels.notifications.height + borderThickness);
-                const showSidebarHover = x > Math.min(width - Config.border.minThickness, bar.implicitWidth + panels.sidebar.x) && y <= sidebarTriggerY;
-                if (showSidebarHover && !screenState.sidebar) {
-                    screenState.sidebar = true;
-                } else {
-                    const inSidebarArea = inRightPanel(panels.sidebar, x, y) || inRightPanel(panels.sessionWrapper, x, y);
-                    if (!inSidebarArea)
-                        screenState.sidebar = false;
-                }
-            }
-
-            // Hide sidebar on drag
-            if (pressed && inRightPanel(panels.sidebar, dragStart.x, 0) && dragX > Config.sidebar.dragThreshold)
-                screenState.sidebar = false;
+        // Show/hide session on drag
+        if (pressed && inRightPanel(panels.sessionWrapper, dragStart.x, dragStart.y) && withinPanelHeight(panels.sessionWrapper, x, y)) {
+            if (dragX < -Config.session.dragThreshold)
+                screenState.session = true;
+            else if (dragX > Config.session.dragThreshold)
+                screenState.session = false;
         }
 
         // Show launcher on hover, or show/hide on drag if hover is disabled
@@ -226,17 +161,6 @@ CustomMouseArea {
                 screenState.dashboard = false;
         }
 
-        // Show utilities on hover
-        const showUtilities = inBottomPanel(panels.utilities, x, y, true);
-
-        // Always update visibility based on hover if not in shortcut mode
-        if (!utilitiesShortcutActive) {
-            screenState.utilities = showUtilities;
-        } else if (showUtilities) {
-            // If hovering over utilities area while in shortcut mode, transition to hover control
-            utilitiesShortcutActive = false;
-        }
-
         // Show popouts on hover
         if (x < bar.implicitWidth) {
             bar.checkPopout(y);
@@ -253,7 +177,6 @@ CustomMouseArea {
             if (!root.screenState.launcher) {
                 root.dashboardShortcutActive = false;
                 root.osdShortcutActive = false;
-                root.utilitiesShortcutActive = false;
 
                 // Also hide dashboard and OSD if they're not being hovered
                 const inDashboardArea = root.inTopPanel(root.panels.dashboard, root.mouseX, root.mouseY);
@@ -292,19 +215,6 @@ CustomMouseArea {
             } else {
                 // OSD hidden, clear shortcut flag
                 root.osdShortcutActive = false;
-            }
-        }
-
-        function onUtilitiesChanged() {
-            if (root.screenState.utilities) {
-                // Utilities became visible, immediately check if this should be shortcut mode
-                const inUtilitiesArea = root.inBottomPanel(root.panels.utilities, root.mouseX, root.mouseY);
-                if (!inUtilitiesArea) {
-                    root.utilitiesShortcutActive = true;
-                }
-            } else {
-                // Utilities hidden, clear shortcut flag
-                root.utilitiesShortcutActive = false;
             }
         }
 

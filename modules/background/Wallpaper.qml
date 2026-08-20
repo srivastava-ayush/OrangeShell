@@ -15,23 +15,23 @@ Item {
     property CachingImage current
     property bool completed
 
-    onSourceChanged: {
-        if (!source)
-            current = null;
-        else
-            current = imgComp.createObject(this, {
-                path: source
-            });
+    Component.onCompleted: {
+        completed = true;
+
+        if (source)
+            current = imgComp.createObject(root, {path: source});
     }
 
-    Component.onCompleted: {
-        if (source)
-            Qt.callLater(() => {
-                current = imgComp.createObject(this, {
-                    path: source
-                });
-                completed = true;
-            });
+    onSourceChanged: {
+        if (!completed)
+            return;
+
+        if (!source) {
+            current = null;
+            return;
+        }
+
+        current = imgComp.createObject(root, {path: source});
     }
 
     Loader {
@@ -106,27 +106,33 @@ Item {
         CachingImage {
             id: img
 
-            anchors.fill: parent
+            width: parent.width
+            height: parent.height
 
             opacity: 0
 
             onStatusChanged: {
                 if (status === Image.Ready)
-                    anim.start();
+                    zoomAnim.start();
             }
 
-            Anim on opacity {
-                id: anim
+            ParallelAnimation {
+                id: zoomAnim
 
-                type: Anim.SlowEffects
                 running: false
-                from: 0
-                to: 1
+
+                Anim {
+                    target: img
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    type: Anim.FastSpatial
+                }
             }
 
             Timer {
                 running: root.current !== img && root.current?.status === Image.Ready
-                interval: anim.duration
+                interval: Tokens.anim.durations.expressiveSlowSpatial
                 onTriggered: img.destroy()
             }
         }

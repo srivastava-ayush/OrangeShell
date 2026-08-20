@@ -1,15 +1,17 @@
 import QtQuick
 import Caelestia.Config
 import qs.components
-import qs.components.effects
 import qs.services
 import qs.utils
 
-Item {
+StyledRect {
     id: root
 
-    implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.2)
-    implicitHeight: Math.round(Tokens.font.body.large.pointSize * 1.2)
+    implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.2) + Tokens.padding.medium
+    implicitHeight: Math.round(Tokens.font.body.large.pointSize * 1.2) + Tokens.padding.medium
+
+    color: "transparent"
+    radius: Tokens.rounding.full
 
     MouseArea {
         anchors.fill: parent
@@ -20,28 +22,12 @@ Item {
         }
     }
 
-    Loader {
-        asynchronous: true
+    Text {
         anchors.centerIn: parent
-        sourceComponent: SysInfo.isDefaultLogo ? caelestiaLogo : distroIcon
-    }
-
-    Component {
-        id: caelestiaLogo
-
-        Logo {
-            implicitWidth: Math.round(Tokens.font.body.large.pointSize * 1.6)
-            implicitHeight: Math.round(Tokens.font.body.large.pointSize * 1.6)
-        }
-    }
-
-    Component {
-        id: distroIcon
-
-        ColouredIcon {
-            source: SysInfo.osLogo
-            implicitSize: Math.round(Tokens.font.body.large.pointSize * 1.2)
-            colour: Colours.palette.m3tertiary
-        }
+        text: "y"
+        font.family: "JetBrainsMono Nerd Font"
+        font.pixelSize: Tokens.font.body.large.pointSize
+        font.bold: true
+        color: Colours.palette.m3primary
     }
 }

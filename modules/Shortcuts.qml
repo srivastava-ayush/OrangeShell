@@ -29,7 +29,7 @@ Scope {
             if (root.hasFullscreen)
                 return;
             const v = ShellState.forActive();
-            v.launcher = v.dashboard = v.osd = v.utilities = !(v.launcher || v.dashboard || v.osd || v.utilities);
+            v.launcher = v.dashboard = v.osd = !(v.launcher || v.dashboard || v.osd);
         }
     }
 
@@ -80,32 +80,6 @@ Scope {
         name: "launcherInterrupt"
         description: "Interrupt launcher keybind"
         onPressed: root.launcherInterrupted = true
-    }
-
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "sidebar"
-        description: "Toggle sidebar"
-        onPressed: {
-            if (root.hasFullscreen)
-                return;
-            const screenState = ShellState.forActive();
-            screenState.sidebar = !screenState.sidebar;
-        }
-    }
-
-    // qmllint disable unresolved-type
-    CustomShortcut {
-        // qmllint enable unresolved-type
-        name: "utilities"
-        description: "Toggle utilities"
-        onPressed: {
-            if (root.hasFullscreen)
-                return;
-            const screenState = ShellState.forActive();
-            screenState.utilities = !screenState.utilities;
-        }
     }
 
     IpcHandler {

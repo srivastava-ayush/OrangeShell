@@ -52,7 +52,7 @@ StyledWindow {
             return 0;
 
         const thresholds = [];
-        for (const panel of ["dashboard", "launcher", "session", "sidebar"])
+        for (const panel of ["dashboard", "launcher", "session"])
             if (contentItem.Config[panel].enabled)
                 thresholds.push(contentItem.Config[panel].dragThreshold);
         return Math.max(...thresholds);
@@ -115,7 +115,7 @@ StyledWindow {
         active: {
             const s = root.screenState;
             const conf = root.contentItem.Config;
-            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled) || (s.sidebar && conf.sidebar.enabled))
+            if ((s.launcher && conf.launcher.enabled) || (s.session && conf.session.enabled))
                 return true;
             if (!conf.dashboard.showOnHover && s.dashboard && conf.dashboard.enabled)
                 return true;
@@ -127,7 +127,6 @@ StyledWindow {
         onCleared: {
             root.screenState.launcher = false;
             root.screenState.session = false;
-            root.screenState.sidebar = false;
             root.screenState.dashboard = false;
             panels.popouts.hasCurrent = false;
             bar.closeTray();
@@ -198,16 +197,6 @@ StyledWindow {
         }
 
         PanelBg {
-            id: sidebarBg
-
-            panel: panels.sidebar
-            deformAmount: 0.03
-            implicitHeight: panel.height * (1 / rawDeformMatrix.m22) + 2
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [utilsBg]
-            bottomLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
-        }
-
-        PanelBg {
             id: osdBg
 
             panel: panels.osdWrapper
@@ -220,15 +209,6 @@ StyledWindow {
             id: notifsBg
 
             panel: panels.notifications
-        }
-
-        PanelBg {
-            id: utilsBg
-
-            panel: panels.utilities
-            deformAmount: panels.sidebar.visible ? 0.1 : 0.15
-            exclude: panels.sidebar.offsetScale > 0.08 ? [] : [sidebarBg]
-            topLeftRadius: Math.max(0, Math.min(1, panels.sidebar.offsetScale / 0.3)) * radius
         }
 
         PanelBg {
@@ -267,9 +247,6 @@ StyledWindow {
             bar: bar
             borderThickness: root.borderThickness
 
-            utilities.horizontalStretch: (sidebarBg.rawDeformMatrix.m11 - 1) / 2 + 1
-            utilities.deformMatrix: utilsBg.rawDeformMatrix
-
             dashboard.transform: Matrix4x4 {
                 matrix: dashBg.deformMatrix
             }
@@ -279,17 +256,11 @@ StyledWindow {
             session.transform: Matrix4x4 {
                 matrix: sessionBg.deformMatrix
             }
-            sidebar.transform: Matrix4x4 {
-                matrix: sidebarBg.deformMatrix
-            }
             osd.transform: Matrix4x4 {
                 matrix: osdBg.deformMatrix
             }
             notifications.transform: Matrix4x4 {
                 matrix: notifsBg.deformMatrix
-            }
-            utilities.transform: Matrix4x4 {
-                matrix: utilsBg.deformMatrix
             }
             popouts.transform: Matrix4x4 {
                 matrix: popoutBg.deformMatrix
