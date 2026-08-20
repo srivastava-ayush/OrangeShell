@@ -31,6 +31,7 @@ class BarPopouts : public ConfigObject {
     CONFIG_PROPERTY(bool, activeWindow, true)
     CONFIG_PROPERTY(bool, tray, true)
     CONFIG_PROPERTY(bool, statusIcons, true)
+    CONFIG_PROPERTY(bool, clock, true)
 
 public:
     explicit BarPopouts(QObject* parent = nullptr)

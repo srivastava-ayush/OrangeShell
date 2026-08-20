@@ -115,6 +115,13 @@ Item {
         }
 
         Popout {
+            name: "clock"
+            sourceComponent: CalendarPopout {
+                popouts: root.popouts
+            }
+        }
+
+        Popout {
             name: "lockstatus"
             sourceComponent: LockStatus {}
         }
