@@ -1,100 +1,92 @@
+pragma ComponentBehavior: Bound
+
 import "dash"
+import "notifications"
+import "utilities/cards"
+import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Caelestia
+import Caelestia.Components
 import Caelestia.Config
 import qs.components
+import qs.components.containers
+import qs.components.controls
+import qs.components.effects
 import qs.components.filedialog
 import qs.services
+import qs.utils
 
-GridLayout {
+Item {
     id: root
 
     required property ScreenState screenState
     required property FileDialog facePicker
 
-    rowSpacing: Tokens.spacing.medium
-    columnSpacing: Tokens.spacing.medium
+    readonly property Props props: Props {}
 
-    Rect {
-        Layout.column: 2
-        Layout.columnSpan: 3
-        Layout.preferredWidth: Tokens.sizes.dashboard.userWidth
-        Layout.fillHeight: true
+    // Floor for the top row so the user card keeps a sane height; the row
+    // grows beyond it when the keep-awake/recorder cards need more room.
+    readonly property int topRowHeight: 176
 
-        radius: Tokens.rounding.extraLarge
+    // Extra width beyond the content sum so the dash reads as a rectangle,
+    // not a square. Tune this to taste.
+    readonly property int extraWidth: 220
 
-        User {
-            id: user
+    implicitWidth: Tokens.sizes.dashboard.userWidth + Tokens.sizes.dashboard.weatherWidth + Tokens.spacing.medium * 3 + root.extraWidth
+    implicitHeight: layout.implicitHeight
 
-            screenState: root.screenState
-            facePicker: root.facePicker
-        }
-    }
+    ColumnLayout {
+        id: layout
 
-    Rect {
-        Layout.row: 0
-        Layout.columnSpan: 2
-        Layout.preferredWidth: Tokens.sizes.dashboard.weatherWidth
-        Layout.preferredHeight: weather.implicitHeight
+        anchors.fill: parent
+        spacing: Tokens.spacing.medium
 
-        radius: Tokens.rounding.extraLarge * 1.5
+        RowLayout {
+            id: row
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.max(root.topRowHeight, utilCards.implicitHeight)
+            spacing: Tokens.spacing.medium
 
-        SmallWeather {
-            id: weather
-        }
-    }
+            Rect {
+                Layout.preferredWidth: Tokens.sizes.dashboard.userWidth
+                Layout.fillHeight: true
 
-    Rect {
-        Layout.row: 1
-        Layout.preferredWidth: dateTime.implicitWidth
-        Layout.fillHeight: true
+                radius: Tokens.rounding.extraLarge
 
-        radius: Tokens.rounding.large
+                User {
+                    screenState: root.screenState
+                    facePicker: root.facePicker
+                }
+            }
 
-        DateTime {
-            id: dateTime
-        }
-    }
+            ColumnLayout {
+                id: utilCards
 
-    Rect {
-        Layout.row: 1
-        Layout.column: 1
-        Layout.columnSpan: 3
-        Layout.fillWidth: true
-        Layout.preferredHeight: calendar.implicitHeight
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignTop
+                spacing: Tokens.spacing.medium
 
-        radius: Tokens.rounding.extraLarge
+                Loader {
+                    Layout.fillWidth: true
+                    active: Config.utilities.cards.keepAwake
+                    visible: active
 
-        Calendar {
-            id: calendar
+                    sourceComponent: IdleInhibit {}
+                }
 
-            screenState: root.screenState
-        }
-    }
+                Loader {
+                    Layout.fillWidth: true
+                    active: Config.utilities.cards.recorder
+                    visible: active
+                    z: 1
 
-    Rect {
-        Layout.row: 1
-        Layout.column: 4
-        Layout.preferredWidth: resources.implicitWidth
-        Layout.fillHeight: true
-
-        radius: Tokens.rounding.large
-
-        Resources {
-            id: resources
-        }
-    }
-
-    Rect {
-        Layout.row: 0
-        Layout.column: 5
-        Layout.rowSpan: 2
-        Layout.preferredWidth: media.implicitWidth
-        Layout.fillHeight: true
-
-        radius: Tokens.rounding.extraLarge * 2
-
-        Media {
-            id: media
+                    sourceComponent: Record {
+                        props: root.props
+                        screenState: root.screenState
+                    }
+                }
+            }
         }
     }
 

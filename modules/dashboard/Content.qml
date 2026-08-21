@@ -38,22 +38,10 @@ Item {
                 enabled: Config.dashboard.showPerformance
             },
             {
-                component: notificationsComponent,
+                component: notifsComponent,
                 iconName: "notifications",
                 text: qsTr("Notifications"),
-                enabled: Config.sidebar.enabled
-            },
-            {
-                component: utilitiesComponent,
-                iconName: "build",
-                text: qsTr("Utilities"),
-                enabled: Config.utilities.enabled
-            },
-            {
-                component: weatherComponent,
-                iconName: "cloud",
-                text: qsTr("Weather"),
-                enabled: Config.dashboard.showWeather
+                enabled: true
             }
         ];
         return allTabs.filter(tab => tab.enabled);
@@ -190,26 +178,12 @@ Item {
             }
 
             Component {
-                id: notificationsComponent
+                id: notifsComponent
 
-                NotificationsTab {
-                    screenState: root.screenState
-                }
-            }
-
-            Component {
-                id: utilitiesComponent
-
-                UtilitiesTab {
+                NotifsTab {
                     screenState: root.screenState
                     popouts: root.popouts
                 }
-            }
-
-            Component {
-                id: weatherComponent
-
-                WeatherTab {}
             }
 
             Behavior on contentX {
@@ -226,3 +200,4 @@ Item {
         Anim {}
     }
 }
+

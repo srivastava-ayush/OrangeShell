@@ -6,54 +6,51 @@ import Caelestia.Config
 import qs.components
 import qs.services
 
-Item {
+RowLayout {
     id: root
 
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    implicitWidth: Tokens.sizes.dashboard.dateTimeWidth
+    spacing: Tokens.spacing.extraSmall
 
-    ColumnLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 0
+    StyledText {
+        Layout.alignment: Qt.AlignVCenter
+        text: Time.hourStr
+        color: Colours.palette.m3onSurface
+        font: Tokens.font.headline.builders.large.weight(Font.Bold).build()
+    }
 
-        StyledText {
-            Layout.bottomMargin: -(font.pointSize * 0.4)
-            Layout.alignment: Qt.AlignHCenter
-            text: Time.hourStr
-            color: Colours.palette.m3secondary
-            font: Tokens.font.clock.size(28).weight(Font.DemiBold).build()
-        }
+    StyledText {
+        Layout.alignment: Qt.AlignVCenter
+        text: ":"
+        color: Colours.palette.m3primary
+        font: Tokens.font.headline.builders.large.weight(Font.Bold).build()
+    }
 
-        StyledText {
-            Layout.alignment: Qt.AlignHCenter
-            text: "•••"
+    StyledText {
+        Layout.alignment: Qt.AlignVCenter
+        text: Time.minuteStr
+        color: Colours.palette.m3onSurface
+        font: Tokens.font.headline.builders.large.weight(Font.Bold).build()
+    }
+
+    Loader {
+        asynchronous: true
+        Layout.alignment: Qt.AlignVCenter
+
+        active: GlobalConfig.services.useTwelveHourClock
+        visible: active
+
+        sourceComponent: StyledText {
+            text: Time.amPmStr.toLowerCase()
             color: Colours.palette.m3primary
-            font: Tokens.font.clock.size(28 * 0.9).build()
+            font: Tokens.font.body.builders.small.weight(Font.DemiBold).build()
         }
+    }
 
-        StyledText {
-            Layout.topMargin: -(font.pointSize * 0.4)
-            Layout.alignment: Qt.AlignHCenter
-            text: Time.minuteStr
-            color: Colours.palette.m3secondary
-            font: Tokens.font.clock.size(28).weight(Font.DemiBold).build()
-        }
-
-        Loader {
-            asynchronous: true
-            Layout.alignment: Qt.AlignHCenter
-
-            active: GlobalConfig.services.useTwelveHourClock
-            visible: active
-
-            sourceComponent: StyledText {
-                text: Time.amPmStr
-                color: Colours.palette.m3primary
-                font: Tokens.font.clock.size(18).weight(Font.DemiBold).build()
-            }
-        }
+    StyledText {
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: Tokens.spacing.small
+        text: Time.format("ddd, MMM d")
+        color: Colours.palette.m3onSurfaceVariant
+        font: Tokens.font.body.builders.small.build()
     }
 }

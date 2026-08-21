@@ -38,6 +38,16 @@ PageBase {
         }
 
         StepperRow {
+            label: qsTr("Width")
+            subtext: qsTr("Thickness of the bar")
+            value: Config.border.thickness
+            from: 1
+            to: 100
+            stepSize: 1
+            onMoved: v => GlobalConfig.border.thickness = v
+        }
+
+        StepperRow {
             last: true
             label: qsTr("Drag threshold")
             subtext: qsTr("Pixels dragged before the bar reveals")

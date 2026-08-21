@@ -78,7 +78,7 @@ QtObject {
         {
             label: qsTr("Language & region"),
             icon: "globe",
-            description: qsTr("UI language, weather location, display units"),
+            description: qsTr("UI language, display units"),
             category: "shell"
         },
 
